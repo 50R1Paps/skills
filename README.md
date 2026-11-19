@@ -10,7 +10,13 @@ Agent skills (`SKILL.md` format), usable from any harness that loads skills from
 
 ## Install
 
-Copy or link a skill folder into your skills directory, for example `~/.agents/skills/` or `~/.claude/skills/`.
+With the [`skills`](https://www.npmjs.com/package/skills) CLI:
+
+- list the skills: `npx skills add 50R1Paps/skills --list`
+- install one for your user: `npx skills add 50R1Paps/skills --skill <name> -g`
+- update the installed ones to `main`: `npx skills update -g`
+
+Or copy a skill folder into your skills directory, for example `~/.agents/skills/` or `~/.claude/skills/`.
 
 `resume-snapshot` needs Python 3 for `scripts/transcript.py`.
 
