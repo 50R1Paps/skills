@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "/firststone — project Atlas for client Contoso, one new app repo on GitHub. We have not chosen the stack yet.",
-      "expected_output": "The agent writes CONTRIBUTING.md without a local-checks section, writes no hook and no CI file, and adds the open step 'rerun /firststone once the stack is chosen' to the setup issue. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "expected_output": "The agent writes CONTRIBUTING.md without a local-checks section, writes no hook and no CI file, and adds the open step 'Choose the stack, then rerun /firststone from the home repo' to the setup issue. It creates no GLOSSARY.md, no docs/adr/, no docs/meetings/ and, when 50R1Paps/skills has no root CODING_STANDARDS.md, no CODING_STANDARDS.md. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
       "files": []
     },
     {
@@ -40,7 +40,7 @@
     {
       "id": 7,
       "prompt": "/firststone — project Portal for client Acme on GitLab: two new app repos, portal-api in Python and portal-web in TypeScript with lint, typecheck and test scripts.",
-      "expected_output": "The agent creates one home repo listing both app repos in AGENTS.md with their default paths, and prepares each app repo separately: pre-commit and ruff for portal-api, husky and the existing package.json scripts for portal-web, each with its own .gitlab-ci.yml and merge request. Fixed rules: every written file has content, nothing in the app repos mentions the home repo or its tracker.",
+      "expected_output": "The agent creates one home repo listing both app repos in AGENTS.md with their default paths, and prepares each app repo separately: pre-commit and ruff for portal-api, husky and the existing package.json scripts for portal-web, each with its own .gitlab-ci.yml and merge request. For portal-web it adds husky through the package manager, so package-lock.json changes with package.json and the CI's npm ci passes. On a self-hosted instance every glab command targets that host (GITLAB_HOST), never gitlab.com. Fixed rules: every written file has content, nothing in the app repos mentions the home repo or its tracker.",
       "files": []
     },
     {
@@ -59,6 +59,12 @@
       "id": 10,
       "prompt": "/firststone — project Billing for client Northwind. The client forbids keeping project material outside its infrastructure: the home repo goes on the client's Bitbucket, which I already created empty. Tracker: the client's Jira.",
       "expected_output": "The agent pushes the home repo with plain Git, adds the open step to restrict its access to the team, and writes workflow.md with the Meeting updates section replaced by the rule that meeting notes stay out of the repo and only decisions are recorded as tickets or ADRs. Fixed rules: every written file has content, nothing in the app repos mentions the home repo or its tracker.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "/firststone — we chose the stack for atlas-api: Python 3.12. Still no code and no tests. (Run from the atlas-knowledge home repo created by eval 3; the atlas-api setup PR is still open.)",
+      "expected_output": "The agent recognises a rerun from AGENTS.md, reads team.md and the setup issue, and asks nothing the files already answer. It pushes .pre-commit-config.yaml, the GitHub Actions workflow and a checks section in its own CONTRIBUTING.md to the existing firststone/setup branch, updates the open PR's description instead of opening a second PR, never pushes to main, and ticks the stack line of the setup issue while adding the open step for pytest with the first test. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
       "files": []
     }
   ]
