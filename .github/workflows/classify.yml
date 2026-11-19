@@ -1,0 +1,72 @@
+# Merges a pull request automatically unless it is delicate.
+#
+# pull_request_target runs this file and the script as they are on main, never the
+# versions in the pull request, and no file of the pull request is run: a pull request
+# cannot rewrite the rules that judge it. The rules live in .github/scripts/classify.sh.
+name: classify
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: classify-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch the pull request as data
+        run: git fetch --no-tags origin "+refs/pull/$PR/head:refs/remotes/pr/head"
+
+      - name: Classify
+        id: classify
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          PRIVATE_TERMS: ${{ secrets.PRIVATE_TERMS }}
+          REASONS_FILE: ${{ runner.temp }}/reasons.md
+        run: bash .github/scripts/classify.sh
+
+      - name: Merge automatically or ask for review
+        env:
+          DELICATE: ${{ steps.classify.outputs.delicate }}
+          OWN: ${{ github.event.pull_request.user.login == github.repository_owner && github.event.pull_request.head.repo.full_name == github.repository }}
+          DRAFT: ${{ github.event.pull_request.draft }}
+          REASONS_FILE: ${{ runner.temp }}/reasons.md
+        run: |
+          if [ "$OWN" != true ]; then
+            echo "- opened by someone other than the owner, or from a fork" >>"$REASONS_FILE"
+            DELICATE=true
+          fi
+          if [ "$DELICATE" = true ]; then
+            gh pr merge "$PR" --disable-auto 2>/dev/null || true
+            gh pr edit "$PR" --add-label needs-review
+            { echo "This pull request needs a manual review, so it will not merge automatically:"; echo; cat "$REASONS_FILE"; } >"$RUNNER_TEMP/comment.md"
+            gh pr comment "$PR" --body-file "$RUNNER_TEMP/comment.md"
+            cat "$RUNNER_TEMP/comment.md" >>"$GITHUB_STEP_SUMMARY"
+          elif [ "$DRAFT" = true ]; then
+            echo "Draft: it merges automatically once marked ready for review." >>"$GITHUB_STEP_SUMMARY"
+          else
+            gh pr edit "$PR" --remove-label needs-review 2>/dev/null || true
+            gh pr merge "$PR" --auto --squash
+            echo "Auto-merge enabled: the pull request merges once this check is green." >>"$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Stop auto-merge when the pull request is invalid
+        if: failure()
+        run: gh pr merge "$PR" --disable-auto 2>/dev/null || true
