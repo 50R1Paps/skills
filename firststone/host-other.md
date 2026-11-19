@@ -20,3 +20,5 @@ Write those two lines under the repo's name in the "Repo notes" section of `docs
 ## Home repo
 
 Only when the client forbids keeping project material elsewhere. Push with plain Git once the user has created the remote. The tracker is then "Other": see step 5 of `SKILL.md`. Add the open step "restrict access to the home repo to the team": on the client's infrastructure it is not private by default.
+
+Test: Granola.
