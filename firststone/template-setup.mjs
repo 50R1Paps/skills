@@ -127,8 +127,19 @@ function listRepos() {
   return repos;
 }
 
+// local.md lists repos kept outside their default path on this machine: | name | path |
+function localPaths() {
+  const paths = new Map();
+  for (const line of readIfExists(join(HOME_REPO, "local.md")).split(/\r?\n/)) {
+    const m = line.match(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$/);
+    if (m && !m[2].startsWith("-")) paths.set(m[1], m[2]);
+  }
+  return paths;
+}
+
 async function offerClones() {
-  const missing = listRepos().filter((r) => !existsSync(r.path));
+  const local = localPaths();
+  const missing = listRepos().filter((r) => !existsSync(r.path) && !(local.has(r.name) && existsSync(local.get(r.name))));
   if (missing.length === 0) {
     console.log("Every listed repo is already on this machine.");
     return;
