@@ -3,68 +3,44 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "/firststone — new project Portal for client Acme. Home repo and one new Python app repo on GitHub under the acme-team org; gh is authenticated with admin rights. Two team members, one client contact.",
-      "expected_output": "The agent completes the interview, shows a plan and writes nothing before the user confirms. It then creates portal-knowledge with AGENTS.md (pointers only), docs/agents/workflow.md, docs/agents/team.md and .gitignore, pushes the first commit to main and creates the retro label. In the app repo it works on firststone/setup, adds CONTRIBUTING.md, .pre-commit-config.yaml and a GitHub Actions workflow, opens a PR, and protects main with PR required and zero approvals. It opens the setup issue and ends by telling the user to run /setup-matt-pocock-skills and then /ask-matt. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker, and the meeting-update format names no tool.",
+      "prompt": "/firststone — add my personal project music-player (https://github.com/me/music-player). This is a new laptop: ~/code does not exist yet. gh is authenticated as me; I use Claude Code.",
+      "expected_output": "The agent finds ~/code/personal/home missing and runs the Personal Home Repo case first. The plan lists ~/code/personal/home with AGENTS.md (one pointer line for music-player at ~/code/personal/music-player with its clone URL), CLAUDE.md holding @AGENTS.md, .gitignore listing local.md, and setup.mjs with AGENTS set to claude-code; it writes nothing before the user confirms. It then creates the private remote me/home with gh, pushes main, runs node setup.mjs, and writes the setup checklist with the line to run /setup-matt-pocock-skills from the Personal Home Repo. It writes no file inside music-player and no work-clones.md.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "/firststone — project Billing for client Northwind. The client already created the app repo on GitHub; it contains a CONTRIBUTING.md, a .github/pull_request_template.md and a Node package.json with lint and test scripts. I cloned it at ~/repos/northwind/billing-api.",
-      "expected_output": "The agent leaves CONTRIBUTING.md, the PR template and package.json byte-identical and reports them as overlaps in the plan and the summary. Because the repo is the client's, it writes no husky files: adopting husky is one open step naming the two package.json edits and the two hook files. Whatever it does add goes on the firststone/setup branch through a PR, never to main; a branch that adds nothing is not pushed. Protection of main defers to the client's own review rule. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "prompt": "/firststone — new work project Portal for client Acme. Team Home Repo on GitHub under the acme-team org; gh is authenticated with admin rights. Two app repos we own already exist: acme-team/portal-api and acme-team/portal-web. Colleague: Luca (luca-gh). Client contact: Sara, product owner. Granola folder: Portal. My Personal Home Repo already exists.",
+      "expected_output": "After the interview and a confirmed plan, the agent creates ~/code/work/acme/portal/home with AGENTS.md (skills install line, /ask-matt, two pointers under ~/code/work/acme/portal/, Granola folder: `Portal`), CLAUDE.md, docs/agents/team.md, docs/agents/constraints.md and .gitignore listing local.md and docs/meetings/transcripts/. It creates the private remote acme-team/portal-home, pushes main, then adds 'acme/portal' with its URL to work-clones.md in ~/code/personal/home and pushes there. It protects main of both app repos with PR required and zero approvals. It writes no file in either app repo, creates no GLOSSARY.md, docs/adr/ or docs/meetings/, no workflow.md and no retro label. The setup checklist tells the user to run /setup-matt-pocock-skills from the Team Home Repo.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "/firststone — project Atlas for client Contoso, one new app repo on GitHub. We have not chosen the stack yet.",
-      "expected_output": "The agent writes CONTRIBUTING.md without a local-checks section, writes no hook and no CI file, and adds the open step 'Choose the stack, then rerun /firststone from the home repo' to the setup issue. It creates no GLOSSARY.md, no docs/adr/, no docs/meetings/ and, when 50R1Paps/skills has no root CODING_STANDARDS.md, no CODING_STANDARDS.md. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "prompt": "/firststone — the client of the Portal project just created a new repo for the mobile app: https://github.com/acme/portal-mobile, owned by the client. (Run from ~/code/work/acme/portal/home, created by eval 2.)",
+      "expected_output": "The agent recognises the App repo case in an existing Team Home Repo, reads team.md and constraints.md, and asks nothing those files answer: only what the repo is, if unknown. It adds one pointer line to AGENTS.md at ~/code/work/acme/portal/portal-mobile, commits and pushes. Because the repo is the client's and constraints.md records no client review rule, it proposes PR-required protection as an open step addressed to Sara rather than setting it. It writes nothing in portal-mobile and nothing in the Personal Home Repo.",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "/firststone — project Portal for client Acme. Home repo on our GitHub org; the client's app repo is on Bitbucket, Python, already created. PRs are opened from the Bitbucket site and CI runs on the client's Jenkins.",
-      "expected_output": "In the app repo the agent uses plain Git only: clone, firststone/setup branch, commit, push. It writes CONTRIBUTING.md and the pre-commit configuration and no CI file. Opening the PR, protecting main and configuring CI are open steps on the setup issue; the agent does not invent Bitbucket menu paths. The user's two lines about PRs and CI appear under Repo notes in workflow.md. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "prompt": "/firststone — new work project Ledger for client Fabrikam, Team Home Repo on GitHub. The client requires that all tickets live in their Jira, and their review rule is two approvals on every PR.",
+      "expected_output": "The agent records the tracker as Other, writes the setup checklist to docs/agents/setup-checklist.md in the Team Home Repo and prints it in chat, and helps draft the paragraph /setup-matt-pocock-skills will ask for: how a Jira ticket is created and assigned and how the five triage states are expressed. constraints.md carries the two-approval rule under Client rules. Fixed rules: every written file has content, nothing is written inside an app repo.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "/firststone — project Ledger for client Fabrikam, home repo and app repo on GitHub. The client requires that all tickets live in their Jira.",
-      "expected_output": "The agent records the tracker as Other, creates no label, writes the setup checklist to docs/agents/setup-checklist.md in the home repo and prints it in chat, tells the user to choose Other in /setup-matt-pocock-skills and helps draft the paragraph describing how tickets are created, assigned and moved through the five triage states and how retro notes are marked. workflow.md words the retro note for that tracker. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "prompt": "/firststone — new work project Portal for client Acme on GitHub, one existing app repo. gh is not authenticated on this machine.",
+      "expected_output": "The agent detects the missing authentication itself, shows the Team Home Repo creation in the plan as a blocking open step, and after confirmation gives the link and the clicks and waits for the URL before wiring the remote with git remote add origin and a plain push. Protection of the app repo's main becomes an open step with its direct link; the setup checklist is written to docs/agents/setup-checklist.md and printed in chat. The work-clones.md line is still added to the Personal Home Repo once the URL is known.",
       "files": []
     },
     {
       "id": 6,
-      "prompt": "/firststone — project Portal for client Acme, everything on GitHub, one new Python app repo. gh is not authenticated on this machine.",
-      "expected_output": "The agent detects the missing authentication itself, generates no script, shows the two by-hand repo creations in the plan as blocking open steps, and after confirmation gives the link and the steps and waits for the URLs before writing to remotes. PR (with title and body to paste), label and protection become open steps with direct links; the setup checklist is written to docs/agents/setup-checklist.md and printed in chat. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "prompt": "/firststone — new work project Billing for client Northwind. The client forbids keeping project material outside its infrastructure: the Team Home Repo goes on the client's Bitbucket, which I already created empty. Tracker: the client's Jira. PRs are opened on the Bitbucket site and CI runs on the client's Jenkins.",
+      "expected_output": "The agent pushes the Team Home Repo with plain Git, adds the open step to restrict its access to the team, and writes constraints.md with the Meeting notes section replaced by the rule that meeting notes stay out of the repo and only decisions are recorded as tickets or ADRs. The user's lines about PRs and CI appear under Client rules. It does not invent Bitbucket menu paths.",
       "files": []
     },
     {
       "id": 7,
-      "prompt": "/firststone — project Portal for client Acme on GitLab: two new app repos, portal-api in Python and portal-web in TypeScript with lint, typecheck and test scripts.",
-      "expected_output": "The agent creates one home repo listing both app repos in AGENTS.md with their default paths, and prepares each app repo separately: pre-commit and ruff for portal-api, husky and the existing package.json scripts for portal-web, each with its own .gitlab-ci.yml and merge request. For portal-web it adds husky through the package manager, so package-lock.json changes with package.json and the CI's npm ci passes. On a self-hosted instance every glab command targets that host (GITLAB_HOST), never gitlab.com. Fixed rules: every written file has content, nothing in the app repos mentions the home repo or its tracker.",
-      "files": []
-    },
-    {
-      "id": 8,
-      "prompt": "/firststone — project Portal for client Acme on GitHub, one Python app repo. The team uses Claude Code. Only firststone is installed on this machine.",
-      "expected_output": "The agent lists in the plan the skills it will commit into the home repo, installs them from the home repo with npx skills add mattpocock/skills --skill <the engineering set> --agent claude-code --copy -y, and commits the skill folders together with skills-lock.json. It installs nothing globally, and the setup checklist has no line asking teammates to install skills. workflow.md says skills are updated at the weekly retro with npx skills update -p through a PR.",
-      "files": []
-    },
-    {
-      "id": 9,
-      "prompt": "/firststone — project Portal for client Acme on GitHub, one Python app repo we own. We need to move fast: I must be able to merge my own PRs when my colleague is busy.",
-      "expected_output": "The agent protects main with PR required and zero required approvals. workflow.md and CONTRIBUTING.md state that review is requested from the other person, that the author may merge without waiting after /code-review and green checks, and that the PR then carries a 'Merged without review: <reason>' line.",
-      "files": []
-    },
-    {
-      "id": 10,
-      "prompt": "/firststone — project Billing for client Northwind. The client forbids keeping project material outside its infrastructure: the home repo goes on the client's Bitbucket, which I already created empty. Tracker: the client's Jira.",
-      "expected_output": "The agent pushes the home repo with plain Git, adds the open step to restrict its access to the team, and writes workflow.md with the Meeting updates section replaced by the rule that meeting notes stay out of the repo and only decisions are recorded as tickets or ADRs. Fixed rules: every written file has content, nothing in the app repos mentions the home repo or its tracker.",
-      "files": []
-    },
-    {
-      "id": 11,
-      "prompt": "/firststone — we chose the stack for atlas-api: Python 3.12. Still no code and no tests. (Run from the atlas-knowledge home repo created by eval 3; the atlas-api setup PR is still open.)",
-      "expected_output": "The agent recognises a rerun from AGENTS.md, reads team.md and the setup issue, and asks nothing the files already answer. It pushes .pre-commit-config.yaml, the GitHub Actions workflow and a checks section in its own CONTRIBUTING.md to the existing firststone/setup branch, updates the open PR's description instead of opening a second PR, never pushes to main, and ticks the stack line of the setup issue while adding the open step for pytest with the first test. Fixed rules: every written file has content, nothing in the app repo mentions the home repo or its tracker.",
+      "prompt": "/firststone — new work project Portal for client Acme on our self-hosted GitLab at git.example.com, group acme. One existing app repo, portal-api.",
+      "expected_output": "Every glab command targets git.example.com (GITLAB_HOST or --hostname), never gitlab.com. The agent creates acme/portal-home as a private project, pushes main, and protects portal-api's main by setting Allowed to push to no one and keeping merge for developers and maintainers, leaving required approvals at zero. It writes no .gitlab-ci.yml and no file in portal-api.",
       "files": []
     }
   ]

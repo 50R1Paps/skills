@@ -5,7 +5,7 @@ Agent skills (`SKILL.md` format), usable from any harness that loads skills from
 | Skill | What it does |
 |---|---|
 | [`explain-simply`](explain-simply/SKILL.md) | Explains a software change at the user's knowledge level: what changed, the engineering decision, and the long-term impact. Keeps a personal calibration profile outside the repository. |
-| [`firststone`](firststone/SKILL.md) | Sets up a new client project: a home repo for tracker, glossary and workflow, plus its app repos with contributing rules, hooks and CI. User-invoked. |
+| [`firststone`](firststone/SKILL.md) | Sets up Home Repos: the Personal Home Repo with its machine setup script, a Team Home Repo for each work project, and the pointers to their app repos. Writes nothing inside app repos. User-invoked. |
 | [`resume-snapshot`](resume-snapshot/SKILL.md) | Rebuilds the work week of a project from its codebase and past agent sessions, and writes a personal snapshot to pick the work up again on Monday. User-invoked. |
 
 ## Install
