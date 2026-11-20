@@ -1,106 +1,93 @@
 ---
 name: firststone
-description: "Set up a new client project: a home repo for knowledge and tracking, plus its app repos."
+description: "Set up a Home Repo: the Personal Home Repo, a Team Home Repo for a new work project, or a pointer for a new personal project or app repo."
 disable-model-invocation: true
 ---
 
-Lay the first stone of a client project: one **home repo** and its **app repos**, ready for a small team and its agents. Talk to the user in their language.
+Lay the first stone of a project: the **Home Repo** its agent sessions start from, and the pointers to its app repos. Talk to the user in their language. The development flow belongs to Matt Pocock's skills (`/ask-matt`); a Home Repo only carries the context that flow runs in.
 
 ## Vocabulary
 
-- **Home repo**: `<project>-knowledge`, internal to the team. Tracker, glossary, ADRs, coding standards, workflow, team, meeting updates and retro notes live here, and every agent session starts here.
-- **App repo**: a repo holding the project's code, owned by the team or by the client. It receives only what the code needs: `CONTRIBUTING.md`, hooks, CI. The client may read it and may never see the home repo, so everything written there stands on its own, with the home repo and the team's tracker left unnamed.
-- **Open step**: work left to a person, because a CLI, a permission or a fact is missing. Write each one with the direct link, the clicks to make and any text to paste (a PR title and body, a label name). On a host you do not know, say the path is unknown and ask, rather than guess its menus.
-- **Setup checklist**: the open steps as a checklist, one line each, with any long text to paste (a PR body) in a section below the list. It lives in the setup issue of the home repo; when no issue can be created (no CLI access, or an "Other" tracker) it lives in `docs/agents/setup-checklist.md` of the home repo and is also printed in chat.
+- **Personal Home Repo**: `~/code/personal/home`, private, the user's alone. Points at every personal project; holds nothing about work except `work-clones.md`, a list of Team Home Repo URLs read only by `setup.mjs`.
+- **Team Home Repo**: `~/code/work/<client>/<project>/home`, one per work project, shared with the colleagues on it. Holds the project's tracker, glossary, ADRs, team, constraints and meeting notes.
+- **App repo**: a repo holding code. Personal: `~/code/personal/<name>`. Work: `~/code/work/<client>/<project>/<name>`. Firststone writes no file in an app repo: checks, hooks and CI arrive later through `/retro`.
+- **Open step**: work left to a person, because a CLI, a permission or a fact is missing. Write each with the direct link, the clicks to make and any text to paste. On a host you do not know, say the path is unknown and ask, rather than guess its menus.
+- **Setup checklist**: the open steps of one run, one line each. It lives in a setup issue of the Home Repo; when no issue can be created (no CLI access, or an "Other" tracker) it lives in `docs/agents/setup-checklist.md` and is also printed in chat.
 
 Names in paths are slugs: lowercase, hyphenated (`Acme Corp` → `acme-corp`).
 
-## Without CLI access
+## 0. Choose the case
 
-When the host's CLI is missing, unauthenticated or refused, every host operation becomes an open step. Creating a repo is the only one that blocks: show it in the plan, and right after confirmation give the user the link and the clicks, then wait for the URL. A repo the user created is wired with `git remote add origin <url>` and a plain push.
+Look before asking: whether `~/code/personal/home` exists, which Team Home Repos exist under `~/code/work/`, and what the user asked for.
 
-## Rerun
+| Case | When |
+|---|---|
+| **Personal Home Repo** | `~/code/personal/home` is missing. Run it first, then the case the user asked for. |
+| **Personal project** | a personal repo has no pointer in the Personal Home Repo. |
+| **Work project** | a new work project: its Team Home Repo does not exist. |
+| **App repo** | a new app repo for a work project whose Team Home Repo exists. |
 
-It is a rerun when the home repo already holds an `AGENTS.md`, on disk or on its remote (clone it). Read the answers from `AGENTS.md` and `docs/agents/team.md`, read the setup checklist, ask only what is still unknown, and do what the unchecked lines now allow (typically hooks and CI for a stack chosen since). Tick the lines you complete.
-
-In an app repo, the files the earlier run wrote (its `CONTRIBUTING.md`) are yours to complete, not existing files to leave byte-identical. Work on `firststone/setup`: when its PR is still open, push to it and update the PR description; when it has been merged, create the branch again from `main` and open a new PR.
+A rerun is a case whose Home Repo already holds an `AGENTS.md`, on disk or on its remote (clone it): read the answers from its files and its setup checklist, ask only what is still unknown, do what the unchecked lines now allow, and tick them.
 
 ## 1. Interview
 
-Find the facts yourself before asking. Reading is free at this stage: inspect an existing repo on its host or through a throwaway clone you delete.
+Find the facts yourself before asking: CLI access for the hosts involved (`gh auth status`, `glab auth status`), each existing app repo's remote and default branch, the coding agents in use from the agent folders on disk (`.claude/`, `.agents/`, `.codex/`). Then ask the rest in batches, each question with a recommended answer.
 
-- CLI access, for the hosts involved only: `gh auth status`, `glab auth status`.
-- Each existing app repo's stack and the files it already has.
-- The coding agents the team uses (Claude Code, Codex…), from the agent folders already on disk (`.claude/`, `.agents/`, `.codex/`), confirmed in the interview.
-
-Then ask the rest in batches, each question with a recommended answer.
-
-- Client and project names.
-- Language of the project docs (default: the conversation's).
-- Home repo host: GitHub or GitLab, and the owner or group. Another host only when the client forbids keeping project material outside its infrastructure.
-- Tracker: the home repo's Issues. "Other" (Jira, Azure Boards…) when the client imposes one or the home repo sits on another host.
-- App repos: how many (default 1). For each: name, host, owner (team or client), new or existing (URL or local path), stack.
-- Team: members (name, tracker username, starting areas), which member the user is, the coding agents they use, and client contacts (name, role, what to ask them). Nothing more personal than that.
-- For an app repo on a host other than GitHub or GitLab: two lines on how pull requests are opened there and where CI runs.
+- **Personal Home Repo**: GitHub owner (the repo is `<owner>/home`, private); the coding agents to install skills for.
+- **Personal project**: name, URL, a few words on what it is, its Granola folder if it has one.
+- **Work project**:
+  - client and project names; language of the project docs (default: the conversation's);
+  - host of the Team Home Repo, GitHub or GitLab, and the owner or group. Another host only when the client forbids keeping project material outside its infrastructure;
+  - tracker: the Team Home Repo's Issues; "Other" (Jira, Azure Boards…) when the client imposes one;
+  - app repos known so far: name, URL, owner (team or client), a few words on each;
+  - members (name, tracker username, starting areas), which member the user is; client contacts (name, role, what to ask them). Nothing more personal than that;
+  - the client's review rule, if any;
+  - the Granola folder name for the project's meetings (default: the project name).
+- **App repo**: name, URL, owner (team or client), a few words on it.
 
 **Done when** every item is answered or the user has deferred it as an open step.
 
 ## 2. Plan
 
-Show one plan covering:
+Show one plan: every folder and file to write, every remote operation (repo creation, push, branch protection, issue), and the open steps already known, blocking ones first. Creating a repo without CLI access blocks: right after confirmation give the link and the clicks, wait for the URL, then wire it with `git remote add origin <url>` and a plain push.
 
-- the folder to create and every file to write, per repo;
-- every remote operation: repo creation, push, label, PR, branch protection;
-- for an existing app repo, the files already there that overlap with yours and stay untouched, or "no overlaps";
-- the open steps already known, blocking ones first;
-- the skills committed into the home repo (see step 3).
-
-The user's confirmation authorises the Git operations in the plan: commits and pushes to `main` in the home repo; in app repos a `firststone/setup` branch and a PR, with `main` left to the merge.
+The confirmation authorises the Git operations in the plan: commits and pushes to `main` of the Home Repos. A Home Repo's `main` stays unprotected: agents write glossary, ADRs and meeting notes to it during sessions.
 
 **Done when** the user confirms. Until then nothing in the plan is executed.
 
-## 3. Home repo
+## 3. Write
 
-Location: when the current folder is named after the client (compare slugs), `./<project>-knowledge/`; otherwise `./<Client>/<project>-knowledge/`. Projects of one client sit side by side.
+Every file written has content. `GLOSSARY.md`, `docs/adr/` and `docs/meetings/` are born later with their first real entry, written by the skill or person that owns it. Every Home Repo gets `CLAUDE.md` holding the single line `@AGENTS.md`.
 
-Write, in the project docs language:
+**Personal Home Repo**, at `~/code/personal/home`:
 
-- `AGENTS.md` from [template-agents.md](template-agents.md);
-- `docs/agents/workflow.md` from [template-workflow.md](template-workflow.md);
+- `AGENTS.md` from [template-personal-agents.md](template-personal-agents.md), with a pointer for each personal repo the user names now;
+- `setup.mjs` from [template-setup.mjs](template-setup.mjs), with `AGENTS` set to the coding agents from the interview; from then on it is the user's file;
+- `.gitignore` listing `local.md`.
+
+Create the private remote following the host file, commit, push `main`, then run `node setup.mjs` once.
+
+**Personal project**: add its pointer to the Personal Home Repo's `AGENTS.md`, commit and push.
+
+**Work project**, at `~/code/work/<client>/<project>/home`, remote `<owner>/<project>-home`, in the project docs language:
+
+- `AGENTS.md` from [template-team-agents.md](template-team-agents.md);
 - `docs/agents/team.md` from [template-team.md](template-team.md);
-- `.gitignore` listing `repos.local.md`;
-- `repos.local.md`, only when an app repo is kept outside its default path (format in `template-agents.md`);
-- `CODING_STANDARDS.md`, copied from the root of `50R1Paps/skills` when that file exists there: the shared standards each project starts from and then adapts.
+- `docs/agents/constraints.md` from [template-constraints.md](template-constraints.md);
+- `.gitignore` listing `local.md` and `docs/meetings/transcripts/`.
 
-Every file you write has content. Do not create `GLOSSARY.md`, `docs/adr/`, `docs/meetings/`, or a `CODING_STANDARDS.md` with no shared source, not even with a first entry of your own: each is born later with its first real entry, written by the skill or person that owns it.
+Create the private remote following the host file, commit, push `main`. Then add the project's line to `work-clones.md` in the Personal Home Repo (format in `template-personal-agents.md`), commit and push there.
 
-Commit the skills so every teammate gets the same version by cloning: `npx skills add mattpocock/skills --skill ask-matt code-review codebase-design diagnosing-bugs domain-modeling grill-with-docs grilling implement implement-spec improve-codebase-architecture pr prototype research retro setup-matt-pocock-skills tdd to-spec to-tickets triage wayfinder wizard --agent <each agent from the interview> --copy -y`, run from the home repo. `--copy` writes real folders instead of links, which Git and Windows both handle; commit them with `skills-lock.json`. The lock only detects drift: the committed folders are what pins the version. Updates happen at the weekly retro (see `template-workflow.md`).
+For each app repo of the project, then for the **App repo** case: add its pointer to the Team Home Repo's `AGENTS.md`, and protect its `main` following the host file: pull request required, zero required approvals. On a client-owned repo the client's rule wins: where the client has none, propose this one as an open step addressed to the client contact. A new app repo is created through the host file before its pointer is written.
 
-Then create the private remote, commit, push `main` and create the `retro` label, following the host file: [host-github.md](host-github.md), [host-gitlab.md](host-gitlab.md) or [host-other.md](host-other.md). The home repo's `main` stays unprotected: agents write glossary, ADRs and meeting updates to it during sessions.
+Host files: [host-github.md](host-github.md), [host-gitlab.md](host-gitlab.md), [host-other.md](host-other.md).
 
-**Done when** the first commit is on the remote `main`.
+**Done when** every Home Repo touched has its commit on the remote `main`.
 
-## 4. App repos
+## 4. Close
 
-For each app repo:
+Write the setup checklist, assigned to the user when it is an issue. For a new Home Repo, one line is always present: run `/setup-matt-pocock-skills` from it. In a Team Home Repo it records the tracker; in the Personal Home Repo the tracker is "the Issues of the app repo the work belongs to". With an "Other" tracker, add a line for the paragraph that skill will ask for, and help the user draft it: how a ticket is created and assigned, and how the five triage states are expressed.
 
-1. Get a clone at `~/repos/<client>/<name>`, or at the path the user gave. A new repo is created through the host file.
-2. Create the branch `firststone/setup`.
-3. Add the missing files: `CONTRIBUTING.md` from [template-contributing.md](template-contributing.md), in the language the repo already uses; hooks and CI when the stack is known, from [stack-python.md](stack-python.md) or [stack-node.md](stack-node.md) wrapped as the host file says.
-4. Leave every existing file byte-identical, except the edits a stack file prescribes (in a team-owned Node repo, `package.json` and its lockfile). When one covers the same ground (a `CONTRIBUTING.md`, a PR template, a CI pipeline), record the overlap for the summary.
-5. Push the branch and open the PR through the host file, with the body written by the `pr` skill when it is installed. Merging it is an open step. A branch that adds nothing is not pushed.
-6. Protect `main`: pull request required, zero required approvals, so the author can merge. On a client-owned repo the client's rule wins: where the client has none, propose this one as an open step addressed to the client contact.
+Then report what was created and where the setup checklist is, and end with the session to open next: `/setup-matt-pocock-skills` in the new Home Repo, then `/ask-matt`.
 
-Unknown stack: write `CONTRIBUTING.md` without its checks section, skip hooks and CI, and add the open step "Choose the stack, then rerun `/firststone` from the home repo". Any other stack than the two above is unknown.
-
-**Done when** each app repo has its branch on the remote and its PR open, or the matching open step, or nothing to add.
-
-## 5. Close
-
-Write the setup checklist, assigned to the user when it is an issue. One line is always present: run `/setup-matt-pocock-skills` from the home repo (it adds its block to the existing `AGENTS.md`).
-
-With an "Other" tracker, create no label, and add a line for the paragraph the setup skill will ask for; help the user draft it: how a ticket is created and assigned, how the five triage states and the retro note are expressed.
-
-Then report: what was created, the overlaps, where the setup checklist is. End by telling the user to run `/setup-matt-pocock-skills` from the home repo and then `/ask-matt` to choose the first flow.
-
-**Done when** the setup checklist exists in the home repo's tracker or files, and every open step is on it.
+**Done when** the setup checklist exists and every open step is on it.

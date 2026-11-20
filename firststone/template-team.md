@@ -1,4 +1,4 @@
-# Template: `docs/agents/team.md` of the home repo
+# Template: `docs/agents/team.md` of a Team Home Repo
 
 Fill from the interview and translate into the project docs language. Names, roles and tracker usernames only.
 
@@ -11,7 +11,7 @@ Fill from the interview and translate into the project docs language. Names, rol
 |---|---|---|
 | <name> | <username> | <areas> |
 
-Assign tickets by area. Areas rotate at the weekly retro.
+Assign tickets by area.
 
 ## Client contacts
 
