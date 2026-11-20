@@ -12,6 +12,7 @@ import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 
 // Coding agents to install the skills for (`npx skills add --help` lists the names).
+// "universal" is ~/.agents/skills, read by agents without a name of their own (omp, for one).
 const AGENTS = ["claude-code"];
 const SKILL_SOURCES = ["mattpocock/skills", "50R1Paps/skills"];
 const TASK_NAME = "skills-daily-update";
@@ -20,7 +21,15 @@ const DRY_RUN = process.argv.includes("--dry-run");
 const HOME_REPO = dirname(fileURLToPath(import.meta.url));
 const CODE = join(homedir(), "code");
 const LOG = join(homedir(), ".skills-update.log");
-const UPDATE = `npx -y skills update -g -y >> "${LOG}" 2>&1`;
+
+const addArgs = (source) => ["-y", "skills", "add", source, "-g", "-y", "--skill", "*", ...AGENTS.flatMap((a) => ["--agent", a])];
+// Daily job: re-add every source so skills published since setup arrive too, then update the rest.
+const UPDATE = [
+  ...SKILL_SOURCES.map((s) => `npx ${addArgs(s).map((a) => (a === "*" ? '"*"' : a)).join(" ")}`),
+  "npx -y skills update -g -y",
+]
+  .map((cmd) => `${cmd} >> "${LOG}" 2>&1`)
+  .join(" && ");
 
 function run(cmd, args, opts = {}) {
   console.log(`$ ${cmd} ${args.join(" ")}`);
@@ -45,10 +54,7 @@ function makeDirs() {
 }
 
 function installSkills() {
-  const agentArgs = AGENTS.flatMap((a) => ["--agent", a]);
-  for (const source of SKILL_SOURCES) {
-    run("npx", ["-y", "skills", "add", source, "-g", "-y", "--skill", "*", ...agentArgs]);
-  }
+  for (const source of SKILL_SOURCES) run("npx", addArgs(source));
 }
 
 // Daily update that also runs at the next start when the machine was off at the scheduled time.
